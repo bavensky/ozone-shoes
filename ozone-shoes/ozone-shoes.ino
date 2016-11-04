@@ -38,27 +38,27 @@ int mode = 0;
 
 /*********   Sub Function *********/
 void timeCount()  {
-  digitalWrite(LED_COUNT, HIGH);
-  digitalWrite(LED_STOP, LOW);
-
   T.Timer();
+  
+  lcd.setCursor(0, 0);
+  lcd.print("   Ozone shoes  ");
+  lcd.setCursor(0, 1);
+  lcd.print("Count ");
+  if (T.ShowMinutes() < 10)  lcd.print("0");
+  lcd.print(T.ShowMinutes());
+  lcd.print(":");
+  if (T.ShowSeconds() < 10)  lcd.print("0");
+  lcd.print(T.ShowSeconds());
+  lcd.print(" m/s   ");
+
   if (T.ShowMinutes() > 0)  {
     digitalWrite(RELAY_FAN, HIGH);
     digitalWrite(RELAY_OZONE, LOW);
-//    lcd.setCursor(0, 1);
-//    lcd.print("Ozone ");
   } else if (T.ShowMinutes() <= 0)  {
     digitalWrite(RELAY_FAN, LOW);
     digitalWrite(RELAY_OZONE, HIGH);
-//    lcd.setCursor(0, 1);
-//    lcd.print("Fan   ");
   }
-  
-  if(T.ShowMinutes() == 1)  {
-    toneBuzzer(50, 50);
-    toneBuzzer(50, 50);
-  }
-  
+
   if (digitalRead(B_START) == 0)  {
     delay(db);
     digitalWrite(RELAY_FAN, HIGH);
@@ -76,23 +76,11 @@ void timeCount()  {
     lcd.print("   Ozone shoes  ");
     lcd.setCursor(0, 1);
     lcd.print("    Complete    ");
-    toneBuzzer(1000, 0);
-    toneBuzzer(100, 50);
-    toneBuzzer(100, 50);
-    mode = 0;
+    toneBuzzer(500, 100);
+    toneBuzzer(100, 100);
+    toneBuzzer(100, 100);
+    mode = 3;
   }
-
-  lcd.setCursor(0, 0);
-    lcd.print("   Ozone shoes  ");
-  //  lcd.setCursor(6, 1);
-  lcd.setCursor(0, 1);
-  lcd.print("Count ");
-  if (T.ShowMinutes() < 10)  lcd.print("0");
-  lcd.print(T.ShowMinutes());
-  lcd.print(":");
-  if (T.ShowSeconds() < 10)  lcd.print("0");
-  lcd.print(T.ShowSeconds());
-  lcd.print(" m/s   ");
 }
 
 void setTimes()  {
@@ -110,7 +98,6 @@ void setTimes()  {
   }
 
   if (timecount <= 2) timecount = 2;
-
 
   if (digitalRead(B_SET) == LOW && btnLast == HIGH && (millis() - btnUpT) > long(debounce)) {
     btnDownT = millis();
@@ -174,13 +161,14 @@ void setup()
   lcd.print("     Welcome    ");
   lcd.setCursor(0, 1);
   lcd.print("   Ozone shoes  ");
-  delay(500); // 5000
+  delay(5000); 
   lcd.clear();
 }
 
 void loop()
 {
   while (mode == 0) {
+
     digitalWrite(LED_COUNT, LOW);
     digitalWrite(LED_STOP, HIGH);
 
@@ -195,6 +183,8 @@ void loop()
     if (digitalRead(B_START) == 0)  {
       delay(db);
       toneBuzzer(1000, 0);
+      digitalWrite(LED_COUNT, HIGH);
+      digitalWrite(LED_STOP, LOW);
       T.SetTimer(0, timecount, 0);
       T.StartTimer();
       mode = 1;
@@ -225,5 +215,17 @@ void loop()
   }
   while (mode == 2) {
     setTimes();
+  }
+  while (mode == 3) {
+    lcd.setCursor(0, 0);
+    lcd.print("   Ozone shoes  ");
+    lcd.setCursor(0, 1);
+    lcd.print("    Complete    ");
+    if (digitalRead(B_START) == 0)  {
+      delay(db);
+      digitalWrite(RELAY_FAN, HIGH);
+      digitalWrite(RELAY_OZONE, HIGH);
+      mode = 0;
+    }
   }
 }
