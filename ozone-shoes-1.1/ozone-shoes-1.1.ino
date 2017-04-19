@@ -22,7 +22,7 @@ CountUpDownTimer T(DOWN);
 #define LED_STOP 6
 #define RELAY_FAN 5
 #define RELAY_OZONE 4
-#define BUZZER 10 //3
+#define BUZZER 3
 #define db 200
 
 #define debounce 30
@@ -36,6 +36,8 @@ int address = 9;
 int timecount = 0;
 int mode = 0;
 int numLoop = 0;
+int numState = 0;
+boolean loopState = false;
 boolean loopCountState = false;
 
 void toneBuzzer(int up, int down) {
